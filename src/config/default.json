@@ -8,5 +8,9 @@
     "USER": "root",
     "PASSWORD": "20010919",
     "DATABASE": "sodamusic"
+  },
+  "JWT": {
+    "SECRETKEY" : "This is a secreKey for encryption",
+    "EXPIRESIN" : "10h"
   }
 }
