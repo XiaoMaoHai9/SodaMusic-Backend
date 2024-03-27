@@ -1,0 +1,12 @@
+{
+  "SERVER": {
+    "HOST": "localhost",
+    "PORT": 3000
+  },
+  "MYSQL": {
+    "HOST": "localhost",
+    "USER": "root",
+    "PASSWORD": "20010919",
+    "DATABASE": "sodamusic"
+  }
+}
