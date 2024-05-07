@@ -1,4 +1,4 @@
-const { SERVER, JWT } = require('./config/default.json');
+const { SERVER, JWT } = require('../config.json');
 const joi = require('joi')
 const express = require('express');
 // 创建应用对象
@@ -28,15 +28,22 @@ app.use(bodyParser.json());
 // 导入用于将客户端发来的 JWT 字符串，解析成 JSON 对象的包
 const {expressjwt} = require('express-jwt')
 // unless() 用来排除哪些接口不需要 Token 验证
-app.use(expressjwt({secret: JWT.SECRETKEY, algorithms: ['HS256']}).unless({path: [/^\/api\//]}))
+app.use(expressjwt({secret: JWT.SECRETKEY, algorithms: ['HS256']}).unless({path: [/^\/account\//, /^\/upload\//, /^\/song\//, /^\/static\//]}))
 
 // 导入 account 接口路由文件
 const accountRouter = require('./routes/account');
 const userInfoRouter = require('./routes/userInfo');
+const songRouter = require('./routes/song');
+const uploadRouter = require('./routes/upload');
+
+const path = require('path')
 
 // 设置与使用路由中间件
-app.use('/api', accountRouter);
+app.use('/account', accountRouter);
 app.use('/my', userInfoRouter);
+app.use('/song', songRouter);
+app.use('/upload', uploadRouter);
+app.use('/static', express.static(path.join(__dirname, 'db')));
 
 // 全局错误捕获 -> 定义错误级别的中间件
 app.use((err, req, res, next) => {

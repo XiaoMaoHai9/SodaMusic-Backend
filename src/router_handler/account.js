@@ -1,11 +1,11 @@
 // 导入数据库操作模块
-const db = require('../db/index')
+const { db} = require('../db/index')
 // 导入 bcryptjs 包 -> 用于加密密码
 const bcryptjs = require('bcryptjs')
 // 导入用于生成 JWT 字符串的包
 const jwt = require('jsonwebtoken')
 // 导入 JWT 配置
-const { JWT } = require('../config/default.json')
+const { JWT } = require('../../config.json')
 
 // 注册新用户的处理函数
 exports.regAccount = (req, res) => {
@@ -13,21 +13,25 @@ exports.regAccount = (req, res) => {
   const account = req.body
 
   // 校验该用户名是否被占用
-  db.query("select * from soda_account where username=?", account.username, (err, results) => {
+  db.query("select * from soda_account where user_name=?", account.user_name, (err, results) => {
     // 数据库操作错误
     if(err) return res.cc(err)
     // 手机号被占用
-    if(results.length > 0) return res.cc('该用户名已被占用')
+    if(results.length > 0) return res.cc('该用户名已被占用!')
 
     // 校验该手机号是否被占用
     db.query("select * from soda_account where phone=?", account.phone, (err, results) => {
       // 数据库操作错误
       if(err) return res.cc(err)
       // 手机号被占用
-      if(results.length > 0) return res.cc('该手机号已被注册')
+      if(results.length > 0) return res.cc('该手机号已被注册!')
 
       // 对密码进行加密处理 -> hashSync(明文密码, 随机盐的长度)
       account.password = bcryptjs.hashSync(account.password, 10)
+
+      // 13 位时间戳 -> 该账户对应的乐库号 lid
+      account.lid= Date.now()
+
       // 插入新账户到数据库
       db.query('insert into soda_account set?', account, (err, results) => {
         if(err) return res.cc(err)
