@@ -3,6 +3,7 @@ const {db} = require('../db/index')
 const mm = require('music-metadata');
 const path = require('path');
 
+// 获取歌曲时长
 async function getDuartion(filePath){
     // 解析音频文件的元数据
     const metadata = await mm.parseFile(filePath)
@@ -57,6 +58,59 @@ exports.getSongLib = (req, res) => {
     // 执行 SQL 语句失败
     if(err) return res.cc(err)
     // if(results.length !== 1) return res.cc('获取歌曲列表失败')
+    results.forEach(item => {
+      item.cover_url =  item.cover_url = 'http://' + path.join(req.headers.host, '/static',item.cover_url.substring(6)).replace(/\\/g, '/')
+      item.file_url =  item.file_url = 'http://' + path.join(req.headers.host, '/static',item.file_url.substring(6)).replace(/\\/g, '/')
+      item.singer = JSON.parse(item.singer)
+      item.style_name = JSON.parse(item.style_name)
+    });
+    // 将歌曲列表响应给客户端
+    res.send({
+      status: 0,
+      msg: '获取歌曲列表成功',
+      code: 200,
+      data: results
+    })
+  })
+}
+
+// 获取搜索列表
+exports.getSearchList = (req, res) => {
+  const { lid, song_name, singer, style_name, language } = req.query;
+
+  // 构建查询条件
+  let query = `select * from soda_music_lib where 1 = 1`;
+  const queryParams = [];
+  
+  if (lid) {
+      query += ' and lid like ?';
+      queryParams.push(`%${lid}%`);
+  }
+
+  if (song_name) {
+      query += ' and song_name like ?';
+      queryParams.push(`%${song_name}%`);
+  }
+  
+  if (singer) {
+      query += ' and singer like ?';
+      queryParams.push(`%${singer}%`);
+  }
+  
+  if (style_name) {
+      query += ' and style_name like ?';
+      queryParams.push(`%${style_name}%`);
+  }
+  
+  if (language) {
+      query += ' and language like ?';
+      queryParams.push(`%${language}%`);
+  }
+  db.query(query, queryParams, (err, results) => {
+    // 执行 SQL 语句失败
+    if(err) return res.cc(err)
+    // if(results.length !== 1) return res.cc('获取歌曲列表失败')
+    if(results.length === 0) return res.cc("未查询到结果 ！ ")
     results.forEach(item => {
       item.cover_url =  item.cover_url = 'http://' + path.join(req.headers.host, '/static',item.cover_url.substring(6)).replace(/\\/g, '/')
       item.file_url =  item.file_url = 'http://' + path.join(req.headers.host, '/static',item.file_url.substring(6)).replace(/\\/g, '/')

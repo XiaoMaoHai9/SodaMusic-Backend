@@ -20,5 +20,7 @@ router.get('/info', song_handler.getSongDetail)
 router.post('/modify', song_handler.modifySongDetail)
 // 音频删除
 router.delete('/delete', song_handler.deleteSong)
+// 条件搜索
+router.post('/search', song_handler.getSearchList)
 
 module.exports = router

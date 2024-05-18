@@ -30,7 +30,7 @@ exports.regAccount = (req, res) => {
       account.password = bcryptjs.hashSync(account.password, 10)
 
       // 13 位时间戳 -> 该账户对应的乐库号 lid
-      account.lid= Date.now()
+      account.lid= Date.now() 
 
       // 插入新账户到数据库
       db.query('insert into soda_account set?', account, (err, results) => {
@@ -57,7 +57,7 @@ exports.login = (req, res) => {
     const compareResult = bcryptjs.compareSync(userInfo.password, results[0].password)
     if(!compareResult) return res.cc('密码错误！请重新输入！') 
     // 生成 Token 字符串
-    const user = {id: results[0].id, phone: results[0].phone}
+    const user = {lid: results[0].lid, phone: results[0].phone}
     const tokenStr = jwt.sign(user, JWT.SECRETKEY, { expiresIn: JWT.EXPIRESIN})
     // 登录成功
     // sign(用户的信息对象, 加密的密钥, 配置对象可配置当前有效期)

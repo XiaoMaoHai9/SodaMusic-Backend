@@ -12,5 +12,7 @@ const userInfo_handler = require('../router_handler/userInfo')
 
 // 获取用户基本信息接口
 router.get('/userinfo', userInfo_handler.getUserInfo)
+// 更新用户信息接口
+router.post('/update', userInfo_handler.updateUserInfo)
 
 module.exports = router
