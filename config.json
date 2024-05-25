@@ -6,7 +6,7 @@
   "MYSQL": {
     "HOST": "localhost",
     "USER": "root",
-    "PASSWORD": "20010919",
+    "PASSWORD": "",
     "DATABASE": "sodamusic"
   },
   "JWT": {
